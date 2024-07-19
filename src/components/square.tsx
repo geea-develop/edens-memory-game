@@ -15,6 +15,7 @@ type Props = {
   displayClass: SquareClasses;
   sizeClass: SquareSize;
   clickable: boolean;
+  handleOnClick?: () => void;
 };
 
 export const Square = (props: Props) => {
@@ -52,6 +53,10 @@ export const Square = (props: Props) => {
         setClassName,
         image: props.image,
       });
+    }
+
+    if (typeof props.handleOnClick === 'function') {
+      props.handleOnClick();
     }
   };
 

@@ -7,9 +7,10 @@ import { Nullable, SelectedSquare } from "../types";
 import { useCompletedCheckerEffect } from "../hooks/completedChecker";
 
 type Props = {
-  size: number;
-  chosenImages: string[];
-  handleUpdate: CallableFunction;
+    size: number;
+    chosenImages: string[];
+    handleUpdate: CallableFunction;
+    handleOnClickCallback?: CallableFunction;
 };
 
 export const Board = (props: Props) => {
@@ -41,15 +42,22 @@ export const Board = (props: Props) => {
       handleChange,
   });
 
+  const handleOnClickCallback = useCallback(() => {
+    if (typeof props.handleOnClickCallback === 'function') {
+      props.handleOnClickCallback();
+    }
+  }, [props]);
+
   const board = renderBoard({
-    size: props.size,
-    isClickEnabled,
-    firstSelectedSquare: getFirstSelectedSquare,
-    secondSelectedSquare: getSecondSelectedSquare,
-    squaresMap,
-    setFirstSelectedSquare,
-    setSecondSelectedSquare,
-    chosenImages: props.chosenImages,
+      size: props.size,
+      isClickEnabled,
+      firstSelectedSquare: getFirstSelectedSquare,
+      secondSelectedSquare: getSecondSelectedSquare,
+      squaresMap,
+      setFirstSelectedSquare,
+      setSecondSelectedSquare,
+      chosenImages: props.chosenImages,
+      handleOnClickCallback,
   });
 
   return <div className="board">{board}</div>;

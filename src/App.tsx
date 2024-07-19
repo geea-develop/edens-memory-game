@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { SizeSelector } from "./components/sizeSelector";
 import { GameModeSelector } from "./components/gameModeSelector";
 import { Counter } from "./components/counter";
+import { Timer } from "./components/timer";
 
 function App() {
     const [getSelectedSize, setSelectedSize] = useState<number | null>(null);
@@ -13,6 +14,8 @@ function App() {
     const [getImages, setImages] = useState<string[] | null>(null);
     const [isGameModeSelected, setIsGameModeSelected] = useState(false);
     const [counter, setCounter] = useState(0);
+    const [timer, setTimer] = useState(Date.now());
+    const [clicks, setClicks] = useState(0);
     const [squaresMap] = useState(new Map());
 
     useEffect(() => {
@@ -25,6 +28,24 @@ function App() {
     const handleUpdate = useCallback(() => {
         setCounter(counter + 1);
     }, [counter]);
+
+    const handleOnClickCallback = useCallback(() => {
+        let interval: NodeJS.Timer;
+        if (clicks === 0) {
+            setTimer(Date.now());
+            if (counter === 0) {
+                interval = setInterval(() => setTimer(Date.now()), 1000);
+            }
+        }
+        setClicks(clicks + 1);
+        return () => {
+            setClicks(0);
+            setTimer(Date.now());
+            if (interval) {
+                clearInterval(interval)
+            }
+        }
+    }, [clicks, counter]);
 
     return (
         <div className="App">
@@ -48,8 +69,10 @@ function App() {
                         size={getSelectedSize}
                         chosenImages={getImages}
                         handleUpdate={handleUpdate}
+                        handleOnClickCallback={handleOnClickCallback}
                     />
                     <Counter counter={counter} />
+                    <Timer timer={timer} />
                 </SquareMapContext.Provider>
             )}
         </div>
